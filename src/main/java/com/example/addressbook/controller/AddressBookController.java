@@ -1,6 +1,7 @@
 package com.example.addressbook.controller;
 
 import com.example.addressbook.model.AddressBook;
+import com.example.addressbook.service.AddressBookService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -9,36 +10,34 @@ import java.util.*;
 @RequestMapping("/addressbook")
 public class AddressBookController {
 
-    private Map<Long, AddressBook> data = new HashMap<>();
-    private Long idCounter = 1L;
+    private final AddressBookService service;
+
+    public AddressBookController(AddressBookService service) {
+        this.service = service;
+    }
 
     @PostMapping
     public AddressBook create(@RequestBody AddressBook entry) {
-        entry.setId(idCounter++);
-        data.put(entry.getId(), entry);
-        return entry;
+        return service.create(entry);
     }
 
     @GetMapping
     public Collection<AddressBook> getAll() {
-        return data.values();
+        return service.getAll();
     }
 
     @GetMapping("/{id}")
     public AddressBook getById(@PathVariable Long id) {
-        return data.get(id);
+        return service.getById(id);
     }
 
     @PutMapping("/{id}")
     public AddressBook update(@PathVariable Long id, @RequestBody AddressBook entry) {
-        entry.setId(id);
-        data.put(id, entry);
-        return entry;
+        return service.update(id, entry);
     }
 
     @DeleteMapping("/{id}")
     public String delete(@PathVariable Long id) {
-        data.remove(id);
-        return "Deleted successfully";
+        return service.delete(id);
     }
 }
